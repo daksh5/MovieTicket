@@ -10,6 +10,8 @@ public class Movies {
 	private String genre;
 	
 	
+	
+	
 	public String getTitle() {
 		return title;
 	}
@@ -52,16 +54,5 @@ public class Movies {
 	public void setGenre(String genre) {
 		this.genre = genre;
 	}
-	
-//	void Movie(String title, String description, int durationInMins, String language, String date, String country, String genre){
-//		
-//		this.title = title;
-//		this.description = description;
-//		this.durationInMins = durationInMins;
-//		this.language = language;
-//		this.date = date;
-//		this.country = country;
-//		this.genre = genre;
-//	}
 
 }
