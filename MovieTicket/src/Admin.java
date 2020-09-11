@@ -2,15 +2,17 @@ package main.java;
 
 public class Admin extends Person {
 
-    boolean addMovie(){
-        return true;
-    }
+    private Show show;
 
-    boolean addShow(){
-        return true;
-    }
+    boolean addMovie(Movie movie);
 
-    boolean blockUser(){
-        return true;
-    }
+    boolean modifyMovie(Movie movie);
+
+    boolean addShow(Show show);
+
+    boolean modifyShow(Show show);
+
+    boolean cancelShow(Show show);
+
+    boolean blockUser(Person person);
 }

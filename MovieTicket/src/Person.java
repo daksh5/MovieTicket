@@ -1,10 +1,12 @@
 package main.java;
 
-public class Person {
+public abstract class Person {
 
-    String name;
-    Address address;
-    String email;
-    String phone;
+    private String name;
+    private Address address;
+    private String email;
+    private String phone;
+
+    private Account account;
 
 }

@@ -2,11 +2,7 @@ package main.java;
 
 public class Customer extends Person {
 
-    boolean makeBooking(){
-        return true;
-    }
+    public boolean makeBooking(Booking booking);
 
-    boolean getBooking(){
-        return true;
-    }
+    public List<Booking> getBooking();
 }
