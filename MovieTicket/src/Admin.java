@@ -17,8 +17,9 @@ public static void AdminMenu() {
 	    System.out.println("----What you want to do----");
 	    System.out.println(" 1. Add movies and shows");
 	    System.out.println(" 2. Cancel Movies and shows");
-	    System.out.println(" 3. Main Menu");
-	    System.out.println(" 4. Exit");
+	    System.out.println(" 3. Delete the customer");
+	    System.out.println(" 4. Main Menu");
+	    System.out.println(" 5. Exit\n");
 	    int input;
 	    while (true) {
 	        try {
@@ -49,14 +50,45 @@ public static void AdminMenu() {
 	    	  MovieTicket.Menu();
 	    	  break;
 	      case 3:
+	    	  blockCustomer();
 	    	  MovieTicket.Menu();
 	    	  break;
 	      case 4:
+	    	  MovieTicket.Menu();
+	    	  break;
+	      case 5:
 	    	  System.exit(0);
 	      default:
 	    	  System.out.print("Invalid input. Please try again: \n\n");
 	    	  AdminMenu();
 	    }
+		
+	}
+
+	public static void blockCustomer() {
+		System.out.println();
+		try {
+			myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username, MovieTicket.password);
+			
+			myStmt = myConn.createStatement();
+			
+			myRs = myStmt.executeQuery("SELECT * FROM Movie_Ticket.Customers;");
+			
+			while (myRs.next()) {
+				System.out.println(myRs.getString("UserName"));
+			}
+			
+			Scanner myObj = new Scanner(System.in);
+			System.out.println("\nWhich customer you want to block?");
+			String uname = myObj.nextLine();
+			
+			myStmt.executeUpdate("DELETE FROM `Movie_Ticket`.`Customers` WHERE (`UserName` = '"+uname+"');");
+			
+		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+		}
+		
 		
 	}
 	

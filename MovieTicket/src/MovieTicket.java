@@ -21,7 +21,8 @@ public class MovieTicket {
 	    System.out.println(" 2. Front Desk Officer");
 	    System.out.println(" 3. Customer");
 	    System.out.println(" 4. Guest");
-	    System.out.println(" 5. Exit");
+	    System.out.println(" 5. Register as a Customer");
+	    System.out.println(" 6. Exit");
 
 	    int input;
 	    while (true) {
@@ -50,9 +51,10 @@ public class MovieTicket {
 	    	  break;
 	      case 3:
 	    	  System.out.println("Customer\n");
-	    	  Customer.customerMenu();
-	    	  System.out.println("\n");
-	    	  Menu();
+	    	  Customer.verify();
+//	    	  Customer.customerMenu();
+//	    	  System.out.println("\n");
+//	    	  Menu();
 	    	  break;
 	      case 4:
 	    	  System.out.println("Guest\n");
@@ -62,6 +64,11 @@ public class MovieTicket {
 	    	  Menu();
 	    	  break;
 	      case 5:
+	    	  System.out.println(" 5. Register as a Customer");
+	    	  System.out.println("\n");
+	    	  Customer.registration();
+	    	  break;
+	      case 6:
 	    	  System.exit(0);
 	      default:
 	    	  System.out.print("Invalid input. Please try again: \n\n");

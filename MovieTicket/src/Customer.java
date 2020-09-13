@@ -1,16 +1,26 @@
 import java.sql.*;
+import java.util.Properties;
 import java.util.Scanner;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 public class Customer {
 	
 	static String line;
+	static String emailid;
 	static String input,seat;
 	static Connection myConn;
 	static Statement myStmt;
 	static ResultSet myRs;
+	static Scanner myObj = new Scanner(System.in);
 	
 	public static void customerMenu() {
-		Scanner myObj = new Scanner(System.in);  
 	    System.out.println("\n----What you want to do----");
 	    System.out.println(" 1. Movie List");
 	    System.out.println(" 2. Search a movie");
@@ -64,18 +74,73 @@ public class Customer {
 	    }
 	}
 	
+	public static void verify() {
+		
+		System.out.println(" UserName:");
+		String uname = myObj.nextLine();
+		System.out.println("Password:");
+		String pass = myObj.nextLine();
+		
+		try {
+			myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username, MovieTicket.password);
+			
+			myStmt = myConn.createStatement();
+			
+			myRs = myStmt.executeQuery("SELECT * FROM Movie_Ticket.Customers WHERE UserName = '"+uname+"' AND Password = '"+pass+"'");
+			
+			while (myRs.next()) {
+				emailid = myRs.getString("EmailId");
+				customerMenu();
+			}
+			MovieTicket.Menu();
+		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+		}
+	}
+	
+	
+	public static void registration() {
+		
+		System.out.println("First Name:");
+		String fn = myObj.nextLine();
+		System.out.println("Last Name:");
+		String ln = myObj.nextLine();
+		System.out.println(" UserName:");
+		String uname = myObj.nextLine();
+		System.out.println("Password:");
+		String pass = myObj.nextLine();
+		System.out.println("email id:");
+		String email = myObj.nextLine();
+
+		try {
+			myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username, MovieTicket.password);
+			
+			myStmt = myConn.createStatement();
+			
+			myStmt.executeUpdate("INSERT INTO `Movie_Ticket`.`Customers` (`UserName`, `Password`, `FirstName`, `LastName`, `EmailId`) VALUES ('"+uname+"', '"+pass+"', '"+fn+"', '"+ln+"', '"+email+"');");
+			
+			System.out.println("You successfuly registerd !!");
+
+		}
+		catch (Exception exc) {
+			exc.printStackTrace();
+		}
+	}
+	
 	public static void seachMovie() {
-		Scanner myObj = new Scanner(System.in);
+		
+		Scanner myOb = new Scanner(System.in);
 		
 		System.out.println("\ntittle\nLanguage\ndescription\ndurationInMins\nreleaseDate\ncountry\ngenre\n");
 		
 		String how,what;
 		
 		System.out.println("How you want to search :");
-		how = myObj.nextLine();
+		how = myOb.nextLine();
 		
 		System.out.println("\nWhat you want to search :");
-		what = myObj.nextLine();
+		what = myOb.nextLine();
 		
 		try {
 			myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username, MovieTicket.password);
@@ -97,6 +162,7 @@ public class Customer {
 	}
 	
 	public static void seatsBooking() {
+		Scanner myOb = new Scanner(System.in);
 		
 		try {
 			myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username, MovieTicket.password);
@@ -112,14 +178,13 @@ public class Customer {
 		catch (Exception exc) {
 			exc.printStackTrace();
 		}
-		Scanner myObj = new Scanner(System.in);
 		
 		System.out.println("\nCode :");
-		input = myObj.nextLine();
+		input = myOb.nextLine();
 		
 		
 		System.out.println("Seat :");
-		seat = myObj.nextLine();
+		seat = myOb.nextLine();
 		
 		try {
 			myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username, MovieTicket.password);
@@ -131,7 +196,7 @@ public class Customer {
 			while (myRs.next()) {
 				line = myRs.getString("seats");
 			}
-			
+
 			String Str = new String(line); 
 			System.out.println(Str.replaceFirst(seat, "XX"));
 			
@@ -139,9 +204,45 @@ public class Customer {
 			Statement myStmtt = myConn.createStatement();
 			
 			myStmtt.executeUpdate("UPDATE `Movie_Ticket`.`Shows` SET `seats` = '"+Str.replaceFirst(seat, "XX")+"' WHERE (`id_city` = '"+input+"');");
+			sendMail(seat,Str.replaceFirst(seat, "XX"));
 		}
 		catch (Exception exc) {
 			exc.printStackTrace();
+		}
+	}
+	
+	public static void sendMail(String st, String sitting) {
+		Properties props = new Properties();
+		
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+		
+		
+		props.put("mail.smtp.connectiontimeout", "t1");
+	    props.put("mail.smtp.timeout", "t2");
+		
+		String myid = "svraj157@gmail.com";
+		String pass = "Usa@1234";
+		
+		Session session = Session.getInstance(props, new Authenticator() {
+			@Override
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(myid,pass);
+			}
+		});
+		
+		try {
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(myid));
+			message.setRecipient(Message.RecipientType.TO, new InternetAddress(emailid));
+			message.setSubject("your seat : "+st);
+			message.setText(sitting);
+			
+			Transport.send(message);
+		}catch(Exception e) {
+			System.out.println("exception");
 		}
 	}
 	
