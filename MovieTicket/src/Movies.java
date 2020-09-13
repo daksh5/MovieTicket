@@ -9,9 +9,6 @@ public class Movies {
 	private String country;
 	private String genre;
 	
-	
-	
-	
 	public String getTitle() {
 		return title;
 	}

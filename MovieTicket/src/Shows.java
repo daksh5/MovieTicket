@@ -31,8 +31,5 @@ public class Shows {
 	public void setShowTimes(String showTimes) {
 		this.showTimes = showTimes;
 	}
-	
-	
-	
 
 }
