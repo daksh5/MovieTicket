@@ -1,35 +1,65 @@
 
 public class Shows {
 	
-	private String name;
-	private String theater;
-	private int shows;
-	private String showTimes;
-	
-	
-	public String getName() {
-		return name;
+	private int id;
+	private String City;
+	private String Theater;
+	private String id_city;
+	private String Times;
+	private String tittle;
+	private String seats;
+	private String id_city_theater_time;
+	public int getId() {
+		return id;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getCity() {
+		return City;
+	}
+	public void setCity(String city) {
+		City = city;
 	}
 	public String getTheater() {
-		return theater;
+		return Theater;
 	}
 	public void setTheater(String theater) {
-		this.theater = theater;
+		Theater = theater;
 	}
-	public int getShows() {
-		return shows;
+	public String getId_city() {
+		return id_city;
 	}
-	public void setShows(int shows) {
-		this.shows = shows;
+	public void setId_city(String id_city) {
+		this.id_city = id_city;
 	}
-	public String getShowTimes() {
-		return showTimes;
+	public String getTimes() {
+		return Times;
 	}
-	public void setShowTimes(String showTimes) {
-		this.showTimes = showTimes;
+	public void setTimes(String times) {
+		Times = times;
 	}
+	public String getTittle() {
+		return tittle;
+	}
+	public void setTittle(String tittle) {
+		this.tittle = tittle;
+	}
+	public String getSeats() {
+		return seats;
+	}
+	public void setSeats(String seats) {
+		this.seats = seats;
+	}
+	public String getId_city_theater_time() {
+		return id_city_theater_time;
+	}
+	public void setId_city_theater_time(String id_city_theater_time) {
+		this.id_city_theater_time = id_city_theater_time;
+	}
+	
+	
+	
+	
 
 }

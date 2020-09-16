@@ -1,6 +1,5 @@
 import java.sql.*;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -18,9 +17,10 @@ public class Customer {
 	static Connection myConn;
 	static Statement myStmt;
 	static ResultSet myRs;
-	static Scanner myObj = new Scanner(System.in);
+	
 	
 	public static void customerMenu() {
+		Scanner myObj = new Scanner(System.in);
 	    System.out.println("\n----What you want to do----");
 	    System.out.println(" 1. Movie List");
 	    System.out.println(" 2. Search a movie");
@@ -75,8 +75,9 @@ public class Customer {
 	}
 	
 	public static void verify() {
+		Scanner myObj = new Scanner(System.in);
 		
-		System.out.println(" UserName:");
+		System.out.println("UserName:");
 		String uname = myObj.nextLine();
 		System.out.println("Password:");
 		String pass = myObj.nextLine();
@@ -101,6 +102,7 @@ public class Customer {
 	
 	
 	public static void registration() {
+		Scanner myObj = new Scanner(System.in);
 		
 		System.out.println("First Name:");
 		String fn = myObj.nextLine();
@@ -172,7 +174,7 @@ public class Customer {
 			myRs = myStmt.executeQuery("SELECT * FROM Movie_Ticket.Shows;");
 			
 			while (myRs.next()) {
-				System.out.println("\n"+myRs.getString("id_city") + ".\t " +myRs.getString("tittle") + ", " + myRs.getString("City") + ", " + myRs.getString("Theater") + ", " + myRs.getString("Time") + "\n" +myRs.getString("seats"));
+				System.out.println("\n"+myRs.getString("id_city_theater_time") + ".\t " +myRs.getString("tittle") + ", " + myRs.getString("City") + ", " + myRs.getString("Theater") + ", " + myRs.getString("Time") + "\n" +myRs.getString("seats"));
 			}
 		}
 		catch (Exception exc) {
@@ -182,16 +184,54 @@ public class Customer {
 		System.out.println("\nCode :");
 		input = myOb.nextLine();
 		
+		System.out.println("\nNumber of seats :");
+		int nticket = myOb.nextInt();
 		
-		System.out.println("Seat :");
-		seat = myOb.nextLine();
+		List lseat = new ArrayList();
+		
+		for(int i = 0; i < nticket; i++) {
+			Scanner myO = new Scanner(System.in);
+			
+			System.out.println("Seat :");
+			seat = myO.nextLine();
+			lseat.add(seat);
+		}
+		
+		for(int i = 0; i < nticket; i++) {
+			try {
+				myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username, MovieTicket.password);
+				
+				myStmt = myConn.createStatement();
+				
+				myRs = myStmt.executeQuery("SELECT * FROM Movie_Ticket.Shows WHERE id_city_theater_time = '"+input+"'");
+				
+				while (myRs.next()) {
+					line = myRs.getString("seats");
+				}
+
+				String Str = new String(line); 
+				System.out.println(Str.replaceFirst((String) lseat.get(i), "XX"));
+				
+				Statement myStmtt = myConn.createStatement();
+				
+				myStmtt.executeUpdate("UPDATE `Movie_Ticket`.`Shows` SET `seats` = '"+Str.replaceFirst((String) lseat.get(i), "XX")+"' WHERE (`id_city_theater_time` = '"+input+"');");
+				
+				sendMail(seat,Str.replaceFirst(seat, "XX"));
+			}
+			catch (Exception exc) {
+				exc.printStackTrace();
+			}
+			
+		}
+		
+
 		
 		try {
 			myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username, MovieTicket.password);
 			
 			myStmt = myConn.createStatement();
 			
-			myRs = myStmt.executeQuery("SELECT * FROM Movie_Ticket.Shows WHERE id_city = '"+input+"'");
+			myRs = myStmt.executeQuery("SELECT * FROM Movie_Ticket.Shows WHERE id_city_theater_time = '"+input+"'");
 			
 			while (myRs.next()) {
 				line = myRs.getString("seats");
@@ -203,7 +243,7 @@ public class Customer {
 			
 			Statement myStmtt = myConn.createStatement();
 			
-			myStmtt.executeUpdate("UPDATE `Movie_Ticket`.`Shows` SET `seats` = '"+Str.replaceFirst(seat, "XX")+"' WHERE (`id_city` = '"+input+"');");
+			myStmtt.executeUpdate("UPDATE `Movie_Ticket`.`Shows` SET `seats` = '"+Str.replaceFirst(seat, "XX")+"' WHERE (`id_city_theater_time` = '"+input+"');");
 			sendMail(seat,Str.replaceFirst(seat, "XX"));
 		}
 		catch (Exception exc) {
@@ -225,6 +265,7 @@ public class Customer {
 		
 		String myid = "svraj157@gmail.com";
 		String pass = "Usa@1234";
+	    
 		
 		Session session = Session.getInstance(props, new Authenticator() {
 			@Override

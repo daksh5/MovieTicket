@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.*;
 import java.sql.*;
 
 
@@ -16,10 +16,11 @@ public static void AdminMenu() {
 		Scanner myObj = new Scanner(System.in);  
 	    System.out.println("----What you want to do----");
 	    System.out.println(" 1. Add movies and shows");
-	    System.out.println(" 2. Cancel Movies and shows");
-	    System.out.println(" 3. Delete the customer");
-	    System.out.println(" 4. Main Menu");
-	    System.out.println(" 5. Exit\n");
+	    System.out.println(" 2. Cancel whole Movies");
+	    System.out.println(" 3. Cancel particular shows");
+	    System.out.println(" 4. Delete the customer");
+	    System.out.println(" 5. Main Menu");
+	    System.out.println(" 6. Exit\n");
 	    int input;
 	    while (true) {
 	        try {
@@ -50,13 +51,18 @@ public static void AdminMenu() {
 	    	  MovieTicket.Menu();
 	    	  break;
 	      case 3:
+	    	  System.out.println("Cancel shows\n");
+	    	  deleteShows();
+	    	  AdminMenu();
+	    	  break;
+	      case 4:
 	    	  blockCustomer();
 	    	  MovieTicket.Menu();
 	    	  break;
-	      case 4:
+	      case 5:
 	    	  MovieTicket.Menu();
 	    	  break;
-	      case 5:
+	      case 6:
 	    	  System.exit(0);
 	      default:
 	    	  System.out.print("Invalid input. Please try again: \n\n");
@@ -128,13 +134,6 @@ public static void AdminMenu() {
 		System.out.println("movie genre:");
 		String genre = myObj.nextLine();
 		
-		System.out.println("theater:");
-		String theater = myObj.nextLine();
-		System.out.println("city:");
-		String city = myObj.nextLine();
-		System.out.println("show time:");
-		String time = myObj.nextLine();
-		
 		try {
 
 			myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username , MovieTicket.password);
@@ -145,12 +144,52 @@ public static void AdminMenu() {
 					+ "('"+(count+1)+"', '"+name+"', '"+language+"', '"+description+"', "
 							+ "'"+durationInMins+"', '"+date+"', '"+country+"', '"+genre+"');");
 			
-			myStmt.executeUpdate("INSERT INTO `Movie_Ticket`.`Shows` (`id`, `City`, `Theater`, `id_city`, `Time`, `tittle`, `seats`) "
-					+ "VALUES ('"+(count+1)+"', '"+city+"', '"+theater+"', '"+(count+1)+city+"', '"+time+"', '"+name+"', '"+seats+"');");	
-			
 		}
 		catch (Exception exc) {
 			exc.printStackTrace();
+		}
+		
+		System.out.println("How many shows:");
+		int nshows = myObj.nextInt();
+		
+		
+		
+		List<Shows> list = new ArrayList<Shows>();
+		Shows s = new Shows();
+		
+		for(int i=0;i<nshows;i++) {
+			Scanner myOb = new Scanner(System.in); 
+			
+			System.out.println("city:");
+			String city = myOb.nextLine();
+			System.out.println("theater:");
+			String theater = myOb.nextLine();
+			System.out.println("show time:");
+			String time = myOb.nextLine();
+			
+//			s.setCity(city);
+//			s.setId((count+1));
+//			s.setId_city((count+1)+city);
+//			s.setSeats(seats);
+//			s.setTheater(theater);
+//			s.setTimes(time);
+//			s.setTittle(name);
+//			s.setId_city_theater_time((count+1)+city+theater+time);
+			
+			try {
+
+				myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username , MovieTicket.password);
+				
+				myStmt = myConn.createStatement();
+				
+				myStmt.executeUpdate("INSERT INTO `Movie_Ticket`.`Shows` (`id`, `City`, `Theater`, `id_city`, `Time`, `tittle`, `seats`, `id_city_theater_time`) "
+						+ "VALUES ('"+(count+1)+"', '"+city+"', '"+theater+"', '"+(count+1)+city+"', '"+time+"', '"+name+"', '"+seats+"', '"+((count+1)+"_"+city+"_"+theater+"_"+time)+"');");	
+				
+			}
+			catch (Exception exc) {
+				exc.printStackTrace();
+			}
+			
 		}
 		
 	}
@@ -175,6 +214,32 @@ public static void deleteMovie() {
 		catch (Exception exc) {
 			exc.printStackTrace();
 		}
+	}
+
+	public static void deleteShows() {
+		
+		try {
+			myConn = DriverManager.getConnection(MovieTicket.jdbc, MovieTicket.username, MovieTicket.password);
+			
+			myStmt = myConn.createStatement();
+			
+			myRs = myStmt.executeQuery("SELECT * FROM Movie_Ticket.Shows;");
+			
+			while (myRs.next()) {
+				System.out.println("\n"+myRs.getString("id_city_theater_time") + ".\t " +myRs.getString("tittle") + ", " + myRs.getString("City") + ", " + myRs.getString("Theater") + ", " + myRs.getString("Time") + "\n");
+			}
+			
+			Scanner myObj = new Scanner(System.in);  
+			System.out.println("Which show you want to delete: ");
+			String dlt = myObj.nextLine();
+			
+			myStmt.executeUpdate("DELETE FROM `Movie_Ticket`.`Shows` WHERE (`id_city_theater_time` = '"+ dlt +"');");
+		}catch (Exception exc) {
+			exc.printStackTrace();
+		}
+		
+		
+		
 	}
 	
 
